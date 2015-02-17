@@ -16,9 +16,32 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
 
-app.use('/', express.static(path.join(__dirname, 'public')));
+var _ = require('lodash');
+var React = require('react');
+
+require("node-jsx").install({ extension: ".js" });
+
+var CommentBox = React.createFactory(require('./public/scripts/components/CommentBox'));
+var template = fs.readFileSync(path.join(__dirname, 'public/base.html'), 'utf8');
+
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+
+app.get('/', function(req, res) {
+  var data = {};
+  var comments = require('./_comments');
+
+  var component = CommentBox({
+    getState: function() {
+      return {data: comments};
+    }
+  });
+
+  data.body = React.renderToString(component);
+
+  res.send(_.template(template)(data));
+});
 
 app.get('/comments.json', function(req, res) {
   fs.readFile('_comments.json', function(err, data) {
