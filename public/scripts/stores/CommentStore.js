@@ -3,6 +3,7 @@ var assign = require('object-assign');
 
 var AppDispatcher = require('../dispatcher/CommentDispatcher');
 var ActionTypes = require('../constants/CommentConstants');
+var Actions = require('../actions/ServerActionsCreators');
 
 var CHANGE_EVENT = 'change';
 
@@ -17,6 +18,12 @@ function _addComments(comments) {
 }
 
 var CommentStore = assign({}, EventEmitter.prototype, {
+  init: function(state) {
+    if(state['CommentStore']) {
+      Actions.recieveComments(state['CommentStore']);
+    }
+  },
+
   getAll: function() {
     return _comments;
   },

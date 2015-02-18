@@ -5,13 +5,19 @@ var CommentStore = require('../stores/CommentStore');
 var CommentList = require('./CommentList');
 var CommentForm = require('./CommentForm');
 
+function getStateFromStore() {
+  return {
+    data: CommentStore.getAll()
+  };
+}
+
 var CommentBox = React.createClass({
   handleCommentSubmit: function(comment) {
     Actions.create(comment);
   },
 
   getInitialState: function() {
-    return this.props.getState();
+    return getStateFromStore();
   },
 
   componentDidMount: function() {
@@ -33,7 +39,7 @@ var CommentBox = React.createClass({
   },
 
   _onChange: function() {
-    this.setState(this.props.getState());
+    this.setState(getStateFromStore());
   }
 });
 

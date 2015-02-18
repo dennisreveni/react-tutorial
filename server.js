@@ -10,6 +10,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+var serialize = require('serialize-javascript');
 var fs = require('fs');
 var path = require('path');
 var express = require('express');
@@ -22,6 +23,8 @@ var React = require('react');
 require("node-jsx").install({ extension: ".js" });
 
 var CommentBox = React.createFactory(require('./public/scripts/components/CommentBox'));
+var CommentStore = require('./public/scripts/stores/CommentStore');
+
 var template = fs.readFileSync(path.join(__dirname, 'public/base.html'), 'utf8');
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -30,15 +33,16 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.get('/', function(req, res) {
   var data = {};
-  var comments = require('./_comments');
+  var comments = JSON.parse(fs.readFileSync('_comments.json', 'utf8'));
 
-  var component = CommentBox({
-    getState: function() {
-      return {data: comments};
-    }
-  });
+  var state = {
+    'CommentStore': comments
+  }
 
-  data.body = React.renderToString(component);
+  CommentStore.init(state);
+
+  data.body = React.renderToString(CommentBox());
+  data.setState = 'window.App=' + serialize(state) + ';'
 
   res.send(_.template(template)(data));
 });

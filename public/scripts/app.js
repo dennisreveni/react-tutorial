@@ -5,12 +5,6 @@ var CommentStore = require('./stores/CommentStore');
 
 var POLL_INTERVAL = 2000;
 
-function getStateFromStore() {
-  return {
-    data: CommentStore.getAll()
-  };
-}
-
 WebUtils.fetchComments();
 
 // Poll new comments
@@ -20,7 +14,9 @@ document.addEventListener('DOMNodeInserted', function (event) {
   console.log(event);
 });
 
+CommentStore.init(window.App);
+
 React.render(
-  <CommentBox getState={getStateFromStore} />,
+  <CommentBox/>,
   document.getElementById('content')
 );
