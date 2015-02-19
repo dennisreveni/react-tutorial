@@ -10,6 +10,8 @@ WebUtils.fetchComments();
 // Poll new comments
 setInterval(WebUtils.fetchComments, POLL_INTERVAL);
 
+// Lets watch DOM mutation events
+// the less the better
 document.addEventListener('DOMNodeInserted', function (event) {
   console.log(event);
 });
